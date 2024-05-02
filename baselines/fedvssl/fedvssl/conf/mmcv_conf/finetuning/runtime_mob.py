@@ -1,4 +1,4 @@
-"""Config file used for fine-tuning on UCF-101 dataset."""
+"""Config file used for fine-tuning on MOB dataset."""
 
 dist_params = {"backend": "nccl"}
 log_level = "INFO"
@@ -8,21 +8,21 @@ syncbn = True
 
 train_cfg = None
 test_cfg = None
-evaluation = {"interval": 10}
+evaluation = {"interval": 5}
 
 data = {
     "videos_per_gpu": 4,  # total batch size 8*4 == 32
     "workers_per_gpu": 4,
     "train": {
         "type": "TSNDataset",
-        "name": "ucf101_train_split1",
+        "name": "mob_train_split1",
         "data_source": {
             "type": "JsonClsDataSource",
-            "ann_file": "ucf101/annotations/train_split_1.json",
+            "ann_file": "mob/annotations/train_split_1.json",
         },
         "backend": {
             "type": "ZipBackend",
-            "zip_fmt": "ucf101/zips/{}.zip",
+            "zip_fmt": "mob/zips/{}.zip",
             "frame_fmt": "img_{:05d}.jpg",
         },
         "frame_sampler": {
@@ -56,14 +56,14 @@ data = {
     },
     "val": {
         "type": "TSNDataset",
-        "name": "ucf101_test_split1",
+        "name": "mob_test_split1",
         "data_source": {
             "type": "JsonClsDataSource",
-            "ann_file": "ucf101/annotations/test_split_1.json",
+            "ann_file": "mob/annotations/test_split_1.json",
         },
         "backend": {
             "type": "ZipBackend",
-            "zip_fmt": "ucf101/zips/{}.zip",
+            "zip_fmt": "mob/zips/{}.zip",
             "frame_fmt": "img_{:05d}.jpg",
         },
         "frame_sampler": {
@@ -88,14 +88,14 @@ data = {
     },
     "test": {
         "type": "TSNDataset",
-        "name": "ucf101_test_split1",
+        "name": "mob_test_split1",
         "data_source": {
             "type": "JsonClsDataSource",
-            "ann_file": "ucf101/annotations/test_split_1.json",
+            "ann_file": "mob/annotations/test_split_1.json",
         },
         "backend": {
             "type": "ZipBackend",
-            "zip_fmt": "ucf101/zips/{}.zip",
+            "zip_fmt": "mob/zips/{}.zip",
             "frame_fmt": "img_{:05d}.jpg",
         },
         "frame_sampler": {
