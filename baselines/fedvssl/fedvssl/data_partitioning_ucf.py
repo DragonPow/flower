@@ -12,6 +12,12 @@ def parse_args():
     """Parse argument to the main function."""
     parser = argparse.ArgumentParser(description="Build partition UCF101 dataset")
     parser.add_argument(
+        "--input_file",
+        # default="/path/to/ucf101/annotations/train_split_1.json",
+        type=str,
+        help="directory path to training .json files.",
+    )
+    parser.add_argument(
         "--json_path",
         default="/path/to/ucf101/annotations",
         type=str,
@@ -40,6 +46,7 @@ def parse_args():
 def main():
     """Define the main function for data partitioning."""
     args = parse_args()
+    input_file = args.input_file
     json_path = args.json_path
     output_path = args.output_path
     num_clients = args.num_clients
@@ -53,7 +60,7 @@ def main():
     # load .json files and concatenate
     data_list = []
     # for i in range(1, 4):
-    with open(json_path + "/train_split_1.json", "r") as f_r:
+    with open(input_file or (json_path + "/train_split_1.json"), "r") as f_r:
         json_object = json.load(f_r)
         data_list += json_object
 

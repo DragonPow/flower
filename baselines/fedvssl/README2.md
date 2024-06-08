@@ -55,28 +55,84 @@ python dataset_convert_to_json.py
 ```bash
 python data_partitioning_ucf.py --json_path data/mob/annotations --output_path data/mob/annotations/client_distribution/ --num_clients 3
 
+# or 
+python data_partitioning_ucf.py --input_file data/mob/annotations/train_split_1.json --output_path data/mob/annotations/client_distribution/ --num_clients 3
+
 cd ..
+```
+
+Workdir = `/fedvssl/mmcv_conf/`
+
+Base config file
+```yaml
+# base.yaml
+pool_size: 2 # number of client
+rounds: 2 # number of round for global server
+...
+strategy:
+  min_fit_clients: 2 # number of client join set parameter when compute in server
+  min_available_clients: 2 # min of client need to ready to start every round
+...
+client_resources:
+  num_gpus: 1
+  num_cpus: 2
+```
+
+Specific model config
+```py
+# pretraining/pretraining_runtime_mob.py
+total_epochs = 10 # epoch for every client in 1 round
+lr_config = {"policy": "step", "step": [100, 200]} # learning policy, with step is mean decrease lr every n epoch
 ```
 
 ### Federated SSL pre-training
 
-Using model:
+1. Using exists model:
 - [alpha0.9_beta0_round-540-weights.array.npz](https://drive.google.com/file/d/1W1oCnLXX0UJhQ4MlmRw-r7z5DTCeO75b/view?usp=sharing)
 - [alpha0.9_beta1_round-540-weights.array.npz](https://drive.google.com/file/d/1BK-bbyunxTWNqs-QyOYiohaNv-t3-hYe/view?usp=sharing)
 
+2. Or using custom pretraining model by above command:
+
+```bash
+python -m fedvssl.main
+```
+
+3. After that, preprocess file result
 ```bash
 python -m fedvssl.finetune_preprocess --pretrained_model_path=<CHECKPOINT>.npz
-# check for checkpoints in above items
+# With checkpoint a the output file .npz of 1. or 2. above
 ```
 
 ### Fine tuning
 
+1. Custom config
+
+Workdir = `/fedvssl/mmcv_conf/`
+
+```py
+# finetuning/runtime_mob.py
+total_epochs = 10 # epoch for every client in 1 round
+lr_config = {"policy": "step", "step": [5, 10, 13], "gamma": 0.5} # learning policy, with step is mean decrease lr every n epoch, learning rate = gramma * learning rate
+```
+
+2. Running file tuning
+
 ```bash
+# Linux
 bash fedvssl/CtP/tools/dist_train.sh fedvssl/conf/mmcv_conf/finetuning/r3d_18_ucf101/finetune_mob.py 1 --work_dir=./finetune_results --data_dir=fedvssl/data
+
+# Windows
+./fedvssl/CtP/tools/dist_train.bat fedvssl/conf/mmcv_conf/finetuning/r3d_18_ucf101/finetune_mob.py 1 --work_dir=./finetune_results --data_dir=fedvssl/data
 ```
 
 After that, we perform the test process:
 
 ```bash
+# Linux
 bash fedvssl/CtP/tools/dist_test.sh fedvssl/conf/mmcv_conf/finetuning/r3d_18_ucf101/test_mob.py 1 --work_dir=./finetune_results --data_dir=fedvssl/data --progress
+
+# or
+
+# Windows
+./fedvssl/CtP/tools/dist_test.bat fedvssl/conf/mmcv_conf/finetuning/r3d_18_ucf101/test_mob.py 1 --work_dir=./finetune_results --data_dir=fedvssl/data --progress
 ```

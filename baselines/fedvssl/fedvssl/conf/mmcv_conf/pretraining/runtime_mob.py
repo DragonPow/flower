@@ -15,10 +15,10 @@ data = {
     "workers_per_gpu": 4,
     "train": {
         "type": "TSNDataset",
-        "name": "mob_train_split",
+        "name": "mob_train_split2",
         "data_source": {
             "type": "JsonClsDataSource",
-            "ann_file": "mob/annotations/finetuning.json",
+            "ann_file": "mob/annotations/train_split_2.json",
         },
         "backend": {
             "type": "ZipBackend",
@@ -121,11 +121,11 @@ data = {
 }
 
 # optimizer
-total_epochs = 5
+total_epochs = 10
 optimizer = {"type": "SGD", "lr": 0.01, "momentum": 0.9, "weight_decay": 5e-4}
 optimizer_config = {"grad_clip": {"max_norm": 40, "norm_type": 2}}
 # learning policy
-lr_config = {"policy": "step", "step": [5, 10, 13], "gamma": 0.5}
+lr_config = {"policy": "step", "step": [5, 8]}
 checkpoint_config = {"interval": 1, "max_keep_ckpts": 1, "create_symlink": False}
 workflow = [("train", 8)]
 log_config = {

@@ -6,6 +6,6 @@ work_dir = "./finetune_results/"
 
 model = {
     "backbone": {
-        "pretrained": "finetune_results/epoch_10.pth",
+        "pretrained": "finetune_results/epoch_5.pth",
     },
 }
